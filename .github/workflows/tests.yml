@@ -1,0 +1,16 @@
+name: Tests 🧪
+on: [pull_request]
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download repo ⬇️
+        uses: actions/checkout@v2
+
+      - name: Set up Go ✨
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17
+
+      - name: run-tests 🧪
+        run: go test -v ./cmd/...
