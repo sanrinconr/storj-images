@@ -20,7 +20,7 @@ type logger interface {
 // Storj interface to interact with the decentralized database.
 type Storj interface {
 	Insert(context.Context, string, []byte) error
-	GetAll(context.Context) error
+	GetAll(context.Context) ([][]byte, error)
 	GetByID(context.Context, string) ([]byte, error)
 	DeleteByID(ctx context.Context, id string) error
 }
@@ -71,24 +71,49 @@ func (s storj) Insert(ctx context.Context, key string, value []byte) error {
 	return nil
 }
 
-func (s storj) GetAll(ctx context.Context) error {
-	s.logger.Debug("getting all info of bucket")
+func (s storj) GetAll(ctx context.Context) ([][]byte, error) {
+	s.logger.Debug("getting all objects of bucket")
+
+	keysList, err := s.listAllObjects(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	objects := make([][]byte, len(keysList))
+
+	for i := range keysList {
+		object, err := s.GetByID(ctx, keysList[i])
+		if err != nil {
+			return nil, err
+		}
+
+		objects[i] = object
+	}
+
+	s.logger.Debug(fmt.Sprintf("obtained all objects of bucket %s", s.bucketName))
+
+	return objects, nil
+}
+
+func (s storj) listAllObjects(ctx context.Context) ([]string, error) {
+	s.logger.Debug("getting all list of keys")
 
 	project, err := s.project(ctx)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	objects := project.ListObjects(ctx, s.bucketName, nil)
 
+	keys := make([]string, 0)
+
 	for objects.Next() {
-		item := objects.Item()
-		fmt.Println(item.IsPrefix, item.Key)
+		keys = append(keys, objects.Item().Key)
 	}
 
-	s.logger.Debug(fmt.Sprintf("listed all objects of bucket %s", s.bucketName))
+	s.logger.Debug("obtained all keys")
 
-	return nil
+	return keys, nil
 }
 
 func (s storj) GetByID(ctx context.Context, id string) ([]byte, error) {
