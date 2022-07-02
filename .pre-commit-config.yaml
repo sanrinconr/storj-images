@@ -1,0 +1,19 @@
+repos:
+  - repo: https://github.com/golangci/golangci-lint
+    rev: v1.44.2
+    hooks:
+      - id: golangci-lint
+        name: Linter
+        entry: golangci-lint run
+        args:
+          - --max-issues-per-linter=0
+          - --max-same-issues=0
+          - --config=.golangci.yaml
+          - --new-from-rev=HEAD~1 # comment this arg if you want to run pre-commit run --all-files
+          - --fix
+
+  - repo: https://github.com/tekwizely/pre-commit-golang
+    rev: v1.0.0-beta.5
+    hooks:
+      - id: go-test-mod
+        name: Running tests
