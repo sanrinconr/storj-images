@@ -1,3 +1,7 @@
 database:
   ids:
     url: 'mongodb://localhost:27017/devmongo?authSource=admin'
+  photos:
+    project: 'Images golang'
+    bucket: 'devimages'
+    token_env: 'TOKEN_STORJ'
