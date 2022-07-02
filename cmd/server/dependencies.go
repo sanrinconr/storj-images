@@ -65,7 +65,11 @@ func resolveLoggerProd() *zap.SugaredLogger {
 		panic(err)
 	}
 
-	return logger.Sugar()
+	s := logger.Sugar()
+
+	logger.Info("Using logger for production")
+
+	return s
 }
 
 func resolveLoggerDev() *zap.SugaredLogger {
@@ -74,5 +78,9 @@ func resolveLoggerDev() *zap.SugaredLogger {
 		panic(err)
 	}
 
-	return logger.Sugar()
+	s := logger.Sugar()
+
+	logger.Info("Using logger for development")
+
+	return s
 }
