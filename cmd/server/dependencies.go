@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 
@@ -24,11 +25,15 @@ func resolver() dependencies {
 	logger := resolveLogger()
 	infraPhotos := resolveInfraPhotos(config, logger)
 
-	return dependencies{
+	d := dependencies{
 		config:     config,
 		logger:     logger,
 		infraStorj: infraPhotos,
 	}
+
+	d.printEnvironment()
+
+	return d
 }
 
 // CONTROLLERS
@@ -110,4 +115,14 @@ func resolveLoggerDev() *zap.SugaredLogger {
 	logger.Info("Using logger for development")
 
 	return s
+}
+
+func (d dependencies) printEnvironment() {
+	indent, err := json.MarshalIndent(d.config, "", " ")
+	if err != nil {
+		d.logger.Error(err)
+	}
+
+	d.logger.Debug("environment variables used")
+	d.logger.Debug(string(indent))
 }

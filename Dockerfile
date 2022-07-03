@@ -22,6 +22,7 @@ COPY . .
 
 # Run tests
 RUN go test ./cmd/...
+
 # Build the application
 RUN go build -o main cmd/api/main.go
 
@@ -29,8 +30,8 @@ RUN go build -o main cmd/api/main.go
 WORKDIR /dist
 
 # Copy binary from build to main folder
-RUN cp /build/main .
-
+RUN cp -r /build/conf .
+RUN cp -r /build/main .
 # Command to run when starting the container
 CMD ["/dist/main"]
 
@@ -40,7 +41,7 @@ FROM alpine
 RUN apk add --no-cache tzdata
 ENV TZ America/Bogota
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-COPY --from=builder /dist/main /
+COPY --from=builder /dist/ /
 
 # Command to run
 ENTRYPOINT ["/main"]
