@@ -54,7 +54,8 @@ func (c Config) validate() error {
 	return nil
 }
 
-func readConfig() (Config, error) {
+// ReadConfig from a file and return an object with all the configs.
+func ReadConfig() (Config, error) {
 	var c Config
 
 	v := viper.New()

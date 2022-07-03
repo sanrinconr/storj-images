@@ -7,6 +7,7 @@ require (
 	github.com/spf13/viper v1.12.0
 	github.com/stretchr/testify v1.8.0
 	go.uber.org/zap v1.21.0
+	storj.io/uplink v1.9.0
 )
 
 require (
@@ -54,5 +55,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	storj.io/common v0.0.0-20220628135513-6bc204229f77 // indirect
 	storj.io/drpc v0.0.32 // indirect
-	storj.io/uplink v1.9.0 // indirect
 )

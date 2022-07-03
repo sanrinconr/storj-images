@@ -68,7 +68,7 @@ func resolveInfraPhotos(c Config, l *zap.SugaredLogger) infratructure.Storj {
 
 // INITIAL CONFIG.
 func resolveConfig() Config {
-	c, err := readConfig()
+	c, err := ReadConfig()
 	if err != nil {
 		panic(err)
 	}
