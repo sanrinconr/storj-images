@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/spf13/viper"
@@ -60,9 +61,13 @@ func ReadConfig() (Config, error) {
 
 	v := viper.New()
 
+	env := actualEnvironment()
+
 	v.AddConfigPath("./conf/")
-	v.SetConfigName(actualEnvironment())
+	v.SetConfigName(env)
 	v.SetConfigType("yaml")
+
+	log.Default().Printf("Using ENV: %s \n", env)
 
 	if err := v.ReadInConfig(); err != nil {
 		return Config{}, err
