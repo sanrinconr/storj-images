@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="ProjectModuleManager">
-    <modules>
-      <module fileurl="file://$PROJECT_DIR$/../boilerplate-api-gin/.idea/boilerplate-api-gin.iml" filepath="$PROJECT_DIR$/../boilerplate-api-gin/.idea/boilerplate-api-gin.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/storj-images.iml" filepath="$PROJECT_DIR$/.idea/storj-images.iml" />
-    </modules>
-  </component>
-</project>

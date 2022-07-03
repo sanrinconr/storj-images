@@ -1,26 +1,33 @@
 package server
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/gin-gonic/gin"
 	"github.com/sanrinconr/storj-images/cmd/controller"
+	"github.com/sanrinconr/storj-images/cmd/infratructure"
 	"go.uber.org/zap"
 )
 
 type (
 	handler      func(ctx *gin.Context) error
 	dependencies struct {
-		config Config
-		logger *zap.SugaredLogger
+		config     Config
+		logger     *zap.SugaredLogger
+		infraStorj infratructure.Storj
 	}
 )
 
 func resolver() dependencies {
 	config := resolveConfig()
 	logger := resolveLogger()
+	infraPhotos := resolveInfraPhotos(config, logger)
 
 	return dependencies{
-		config: config,
-		logger: logger,
+		config:     config,
+		logger:     logger,
+		infraStorj: infraPhotos,
 	}
 }
 
@@ -38,10 +45,30 @@ func (d dependencies) Error() handler {
 	return ctl.Error
 }
 
-// INITIAL CONFIG
+// STORJ
 
+func resolveInfraPhotos(c Config, l *zap.SugaredLogger) infratructure.Storj {
+	t := os.Getenv(c.TokenENV)
+	if t == "" {
+		panic(fmt.Errorf("variable %s not exists", c.TokenENV))
+	}
+
+	s, err := infratructure.NewStorj(
+		infratructure.WithStorjAppAccess(t),
+		infratructure.WithStorjBucketName(c.Bucket),
+		infratructure.WithStorjProjectName(c.Project),
+		infratructure.WithStorjLogger(l),
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	return s
+}
+
+// INITIAL CONFIG.
 func resolveConfig() Config {
-	c, err := readConfig()
+	c, err := ReadConfig()
 	if err != nil {
 		panic(err)
 	}
