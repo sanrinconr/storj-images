@@ -88,7 +88,6 @@ func actualEnvironment() string {
 	const DefaultEnvironment = "develop"
 
 	env := os.Getenv("ENV")
-
 	if env == "" {
 		return DefaultEnvironment
 	}
