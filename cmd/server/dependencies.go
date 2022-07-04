@@ -53,15 +53,15 @@ func (d dependencies) Error() handler {
 // STORJ
 
 func resolveInfraPhotos(c Config, l *zap.SugaredLogger) infratructure.Storj {
-	t := os.Getenv(c.TokenENV)
+	t := os.Getenv(c.Database.Photos.TokenENV)
 	if t == "" {
-		panic(fmt.Errorf("variable %s not exists", c.TokenENV))
+		panic(fmt.Errorf("variable %s not exists", c.Database.Photos.TokenENV))
 	}
 
 	s, err := infratructure.NewStorj(
 		infratructure.WithStorjAppAccess(t),
-		infratructure.WithStorjBucketName(c.Bucket),
-		infratructure.WithStorjProjectName(c.Project),
+		infratructure.WithStorjBucketName(c.Database.Photos.Bucket),
+		infratructure.WithStorjProjectName(c.Database.Photos.Project),
 		infratructure.WithStorjLogger(l),
 	)
 	if err != nil {
