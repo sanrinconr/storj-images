@@ -11,18 +11,22 @@ import (
 type (
 	// Config general struct that have the configuration.
 	Config struct {
-		Database
+		Database Database
 	}
 
 	// Database related databases configuration.
 	Database struct {
-		IDS
-		Photos
+		IDS    IDS
+		Photos Photos
 	}
 
 	// IDS configuration related to the database of IDS.
 	IDS struct {
-		URL string `mapstructure:"url"`
+		URL        string `mapstructure:"url"`
+		DBName     string `mapstructure:"database"`
+		Collection string `mapstructure:"collection"`
+		UserENV    string `mapstructure:"user_env"`
+		PassENV    string `mapstructure:"password_env"`
 	}
 
 	// Photos configuration related to the storj photos.
@@ -36,20 +40,48 @@ type (
 func (c Config) validate() error {
 	const MissingConfig = "missing config: %s"
 
-	if c.Database.IDS.URL == "" {
-		return fmt.Errorf(MissingConfig, "Database.IDS.URL")
+	if err := c.validateIDS(); err != nil {
+		return fmt.Errorf(MissingConfig, err)
 	}
 
+	if err := c.validatePhotos(); err != nil {
+		return fmt.Errorf(MissingConfig, err)
+	}
+
+	return nil
+}
+
+func (c Config) validateIDS() error {
+	const MissingIDS = "in IDS section: %s"
+
+	if c.Database.IDS.URL == "" {
+		return fmt.Errorf(MissingIDS, "DBName.IDS.URL")
+	}
+
+	if c.Database.IDS.Collection == "" {
+		return fmt.Errorf(MissingIDS, "DBName.IDS.Collection")
+	}
+
+	if c.Database.IDS.Collection == "" {
+		return fmt.Errorf(MissingIDS, "DBName.IDS.Collection")
+	}
+
+	return nil
+}
+
+func (c Config) validatePhotos() error {
+	const MissingPhotos = "in photos section: %s"
+
 	if c.Database.Photos.Project == "" {
-		return fmt.Errorf(MissingConfig, "Database.Photos.Project")
+		return fmt.Errorf(MissingPhotos, "DBName.Photos.Project")
 	}
 
 	if c.Database.Photos.Bucket == "" {
-		return fmt.Errorf(MissingConfig, "Database.Photos.Bucket")
+		return fmt.Errorf(MissingPhotos, "DBName.Photos.Bucket")
 	}
 
 	if c.Database.Photos.TokenENV == "" {
-		return fmt.Errorf(MissingConfig, "Database.Photos.TokenENV")
+		return fmt.Errorf(MissingPhotos, "DBName.Photos.TokenENV")
 	}
 
 	return nil
