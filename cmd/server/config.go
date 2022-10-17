@@ -3,7 +3,6 @@ package server
 import (
 	"fmt"
 	"log"
-	"os"
 
 	"github.com/spf13/viper"
 )
@@ -114,15 +113,4 @@ func ReadConfig() (Config, error) {
 	}
 
 	return c, nil
-}
-
-func actualEnvironment() string {
-	const DefaultEnvironment = "develop"
-
-	env := os.Getenv("ENV")
-	if env == "" {
-		return DefaultEnvironment
-	}
-
-	return env
 }

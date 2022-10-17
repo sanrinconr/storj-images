@@ -1,7 +1,8 @@
-name: Tests 🧪
+name: 🧪
 on: [pull_request]
 jobs:
   tests:
+    name: tests
     runs-on: ubuntu-latest
     steps:
       - name: Download repo ⬇️
@@ -10,7 +11,7 @@ jobs:
       - name: Set up Go ✨
         uses: actions/setup-go@v2
         with:
-          go-version: 1.17
+          go-version: 1.19
 
-      - name: run-tests 🧪
+      - name: run
         run: go test -v ./cmd/...

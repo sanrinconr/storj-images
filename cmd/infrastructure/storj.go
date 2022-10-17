@@ -1,21 +1,15 @@
-package infratructure
+// Package infrastructure provide the raw management of external dependencies
+package infrastructure
 
 import (
 	"bytes"
 	"context"
 	"fmt"
 	"io"
-	"io/ioutil"
 
+	"github.com/sanrinconr/storj-images/cmd/log"
 	"storj.io/uplink"
 )
-
-type logger interface {
-	Debug(...interface{})
-	Info(...interface{})
-	Warn(...interface{})
-	Error(...interface{})
-}
 
 // Storj interface to interact with the decentralized database.
 type Storj interface {
@@ -27,7 +21,6 @@ type Storj interface {
 
 type (
 	storj struct {
-		logger
 		appAccessToken string
 		bucketName     string
 		projectName    string
@@ -38,7 +31,7 @@ type (
 )
 
 func (s storj) Insert(ctx context.Context, key string, value []byte) error {
-	s.logger.Debug(fmt.Sprintf("inserting key: %s", key))
+	log.GetLoggerFromCtx(ctx).Debug(fmt.Sprintf("inserting key: %s", key))
 
 	project, err := s.project(ctx)
 	if err != nil {
@@ -55,7 +48,7 @@ func (s storj) Insert(ctx context.Context, key string, value []byte) error {
 	_, err = io.Copy(uploadBuf, buf)
 	if err != nil {
 		if err := uploadBuf.Abort(); err != nil {
-			s.logger.Error(fmt.Errorf("aborting upload: %s", err))
+			log.GetLoggerFromCtx(ctx).Error(fmt.Errorf("aborting upload: %s", err))
 		}
 
 		return err
@@ -66,13 +59,13 @@ func (s storj) Insert(ctx context.Context, key string, value []byte) error {
 		return err
 	}
 
-	s.logger.Debug(fmt.Sprintf("finished insert of %s", key))
+	log.GetLoggerFromCtx(ctx).Debug(fmt.Sprintf("finished insert of %s", key))
 
 	return nil
 }
 
 func (s storj) GetAll(ctx context.Context) ([][]byte, error) {
-	s.logger.Debug("getting all objects of bucket")
+	log.GetLoggerFromCtx(ctx).Debug("getting all objects of bucket")
 
 	keysList, err := s.listAllObjects(ctx)
 	if err != nil {
@@ -90,13 +83,13 @@ func (s storj) GetAll(ctx context.Context) ([][]byte, error) {
 		objects[i] = object
 	}
 
-	s.logger.Debug(fmt.Sprintf("obtained all objects of bucket %s", s.bucketName))
+	log.GetLoggerFromCtx(ctx).Debug(fmt.Sprintf("obtained all objects of bucket %s", s.bucketName))
 
 	return objects, nil
 }
 
 func (s storj) listAllObjects(ctx context.Context) ([]string, error) {
-	s.logger.Debug("getting all list of keys")
+	log.GetLoggerFromCtx(ctx).Debug("getting all list of keys")
 
 	project, err := s.project(ctx)
 	if err != nil {
@@ -111,13 +104,13 @@ func (s storj) listAllObjects(ctx context.Context) ([]string, error) {
 		keys = append(keys, objects.Item().Key)
 	}
 
-	s.logger.Debug("obtained all keys")
+	log.GetLoggerFromCtx(ctx).Debug("obtained all keys")
 
 	return keys, nil
 }
 
 func (s storj) GetByID(ctx context.Context, id string) ([]byte, error) {
-	s.logger.Debug(fmt.Sprintf("getting info of object %s", id))
+	log.GetLoggerFromCtx(ctx).Debug(fmt.Sprintf("getting info of object %s", id))
 
 	project, err := s.project(ctx)
 	if err != nil {
@@ -131,22 +124,22 @@ func (s storj) GetByID(ctx context.Context, id string) ([]byte, error) {
 
 	defer func(object *uplink.Download) {
 		if err := object.Close(); err != nil {
-			s.logger.Error(fmt.Errorf("object cannot be closed: %s", err))
+			log.GetLoggerFromCtx(ctx).Error(fmt.Errorf("object cannot be closed: %s", err))
 		}
 	}(object)
 
-	received, err := ioutil.ReadAll(object)
+	received, err := io.ReadAll(object)
 	if err != nil {
 		return nil, err
 	}
 
-	s.logger.Debug(fmt.Sprintf("finished finding of object %s", id))
+	log.GetLoggerFromCtx(ctx).Debug(fmt.Sprintf("finished finding of object %s", id))
 
 	return received, err
 }
 
 func (s storj) DeleteByID(ctx context.Context, id string) error {
-	s.logger.Debug(fmt.Sprintf("deleting object %s", id))
+	log.GetLoggerFromCtx(ctx).Debug(fmt.Sprintf("deleting object %s", id))
 
 	project, err := s.project(ctx)
 	if err != nil {
@@ -159,12 +152,12 @@ func (s storj) DeleteByID(ctx context.Context, id string) error {
 	}
 
 	if object == nil {
-		s.logger.Debug(fmt.Sprintf("no exists object %s", id))
+		log.GetLoggerFromCtx(ctx).Debug(fmt.Sprintf("no exists object %s", id))
 
 		return nil
 	}
 
-	s.logger.Debug(fmt.Sprintf("deleted object %s", object.Key))
+	log.GetLoggerFromCtx(ctx).Debug(fmt.Sprintf("deleted object %s", object.Key))
 
 	return nil
 }
@@ -205,10 +198,6 @@ func (s storj) validate() error {
 		return fmt.Errorf(dependencyErr, "project name")
 	}
 
-	if s.logger == nil {
-		return fmt.Errorf(dependencyErr, "logger")
-	}
-
 	return nil
 }
 
@@ -225,13 +214,6 @@ func NewStorj(opts ...StorjOption) (Storj, error) {
 	}
 
 	return s, nil
-}
-
-// WithStorjLogger configure a logger.
-func WithStorjLogger(l logger) StorjOption {
-	return func(s *storj) {
-		s.logger = l
-	}
 }
 
 // WithStorjAppAccess set the environment varible where find the access token.
