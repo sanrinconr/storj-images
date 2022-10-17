@@ -1,11 +1,14 @@
 module github.com/sanrinconr/storj-images
 
-go 1.17
+go 1.19
 
 require (
 	github.com/gin-gonic/gin v1.8.1
-	github.com/spf13/viper v1.12.0
 	github.com/stretchr/testify v1.8.0
+)
+
+require (
+	github.com/spf13/viper v1.12.0
 	go.uber.org/zap v1.21.0
 	storj.io/uplink v1.9.0
 )
