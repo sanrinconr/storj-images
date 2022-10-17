@@ -4,7 +4,7 @@ import (
 	"net/http"
 )
 
-// Error returned when an error is generated, can be used by all controllers.
+// Error returned when a error is generated, can be used by all controllers.
 type Error struct {
 	Code    int    `json:"Code"`
 	Message string `json:"Message"`

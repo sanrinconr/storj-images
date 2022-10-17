@@ -6,8 +6,17 @@ import (
 )
 
 func setRoutes(router *gin.Engine) {
-	resolver := resolver()
+	resolver := resolver(resolveConfig())
 	public := router.Group("")
 	public.GET("/ping", middlewares.Bridge(resolver.Ping()))
 	public.GET("/error", middlewares.Bridge(resolver.Error()))
+}
+
+func resolveConfig() Config {
+	c, err := ReadConfig()
+	if err != nil {
+		panic(err)
+	}
+
+	return c
 }

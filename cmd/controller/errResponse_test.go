@@ -14,8 +14,8 @@ import (
 func TestError(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	c, _ := gin.CreateTestContext(httptest.NewRecorder())
-	ctl := controller.DummyError{}
-	want := controller.NewError(http.StatusInternalServerError, errors.New("dummy error"))
+	ctl := controller.ErrResponse{}
+	want := controller.NewError(http.StatusInternalServerError, errors.New("test Error"))
 
 	got := ctl.Error(c)
 
