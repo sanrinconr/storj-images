@@ -1,4 +1,5 @@
-package infratructure
+// Package infrastructure provide the raw management of external dependencies
+package infrastructure
 
 import (
 	"bytes"
@@ -30,7 +31,7 @@ type (
 )
 
 func (s storj) Insert(ctx context.Context, key string, value []byte) error {
-	log.GetLoggerFromCtx(ctx).Debug(fmt.Sprintf("inserting key: %s", key))
+	log.Debug(ctx, fmt.Sprintf("inserting data in storj with bucket '%s' and key '%s'", s.bucketName, key))
 
 	project, err := s.project(ctx)
 	if err != nil {
@@ -47,7 +48,7 @@ func (s storj) Insert(ctx context.Context, key string, value []byte) error {
 	_, err = io.Copy(uploadBuf, buf)
 	if err != nil {
 		if err := uploadBuf.Abort(); err != nil {
-			log.GetLoggerFromCtx(ctx).Error(fmt.Errorf("aborting upload: %s", err))
+			log.Error(ctx, fmt.Errorf("aborting upload: %s", err))
 		}
 
 		return err
@@ -58,13 +59,11 @@ func (s storj) Insert(ctx context.Context, key string, value []byte) error {
 		return err
 	}
 
-	log.GetLoggerFromCtx(ctx).Debug(fmt.Sprintf("finished insert of %s", key))
-
 	return nil
 }
 
 func (s storj) GetAll(ctx context.Context) ([][]byte, error) {
-	log.GetLoggerFromCtx(ctx).Debug("getting all objects of bucket")
+	log.Debug(ctx, "getting all objects of bucket")
 
 	keysList, err := s.listAllObjects(ctx)
 	if err != nil {
@@ -82,13 +81,13 @@ func (s storj) GetAll(ctx context.Context) ([][]byte, error) {
 		objects[i] = object
 	}
 
-	log.GetLoggerFromCtx(ctx).Debug(fmt.Sprintf("obtained all objects of bucket %s", s.bucketName))
+	log.Debug(ctx, fmt.Sprintf("obtained all objects of bucket %s", s.bucketName))
 
 	return objects, nil
 }
 
 func (s storj) listAllObjects(ctx context.Context) ([]string, error) {
-	log.GetLoggerFromCtx(ctx).Debug("getting all list of keys")
+	log.Debug(ctx, "getting all list of keys")
 
 	project, err := s.project(ctx)
 	if err != nil {
@@ -103,13 +102,13 @@ func (s storj) listAllObjects(ctx context.Context) ([]string, error) {
 		keys = append(keys, objects.Item().Key)
 	}
 
-	log.GetLoggerFromCtx(ctx).Debug("obtained all keys")
+	log.Debug(ctx, "obtained all keys")
 
 	return keys, nil
 }
 
 func (s storj) GetByID(ctx context.Context, id string) ([]byte, error) {
-	log.GetLoggerFromCtx(ctx).Debug(fmt.Sprintf("getting info of object %s", id))
+	log.Debug(ctx, fmt.Sprintf("getting info of object %s", id))
 
 	project, err := s.project(ctx)
 	if err != nil {
@@ -123,7 +122,7 @@ func (s storj) GetByID(ctx context.Context, id string) ([]byte, error) {
 
 	defer func(object *uplink.Download) {
 		if err := object.Close(); err != nil {
-			log.GetLoggerFromCtx(ctx).Error(fmt.Errorf("object cannot be closed: %s", err))
+			log.Error(ctx, fmt.Errorf("object cannot be closed: %s", err))
 		}
 	}(object)
 
@@ -132,13 +131,13 @@ func (s storj) GetByID(ctx context.Context, id string) ([]byte, error) {
 		return nil, err
 	}
 
-	log.GetLoggerFromCtx(ctx).Debug(fmt.Sprintf("finished finding of object %s", id))
+	log.Debug(ctx, fmt.Sprintf("finished finding of object %s", id))
 
 	return received, err
 }
 
 func (s storj) DeleteByID(ctx context.Context, id string) error {
-	log.GetLoggerFromCtx(ctx).Debug(fmt.Sprintf("deleting object %s", id))
+	log.Debug(ctx, fmt.Sprintf("deleting object %s", id))
 
 	project, err := s.project(ctx)
 	if err != nil {
@@ -151,12 +150,12 @@ func (s storj) DeleteByID(ctx context.Context, id string) error {
 	}
 
 	if object == nil {
-		log.GetLoggerFromCtx(ctx).Debug(fmt.Sprintf("no exists object %s", id))
+		log.Debug(ctx, fmt.Sprintf("no exists object %s", id))
 
 		return nil
 	}
 
-	log.GetLoggerFromCtx(ctx).Debug(fmt.Sprintf("deleted object %s", object.Key))
+	log.Debug(ctx, fmt.Sprintf("deleted object %s", object.Key))
 
 	return nil
 }

@@ -1,8 +1,7 @@
-package server
+package dependencies
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/spf13/viper"
 )
@@ -11,6 +10,7 @@ type (
 	// Config general struct that have the configuration.
 	Config struct {
 		Database
+		Image
 	}
 
 	// Database related databases configuration.
@@ -21,7 +21,11 @@ type (
 
 	// IDS configuration related to the database of IDS.
 	IDS struct {
-		URL string `mapstructure:"url"`
+		URL         string `mapstructure:"url"`
+		Database    string `mapstructure:"database"`
+		Collection  string `mapstructure:"collection"`
+		UserENV     string `mapstructure:"user_env"`
+		PasswordENV string `mapstructure:"password_env"`
 	}
 
 	// Photos configuration related to the storj photos.
@@ -29,6 +33,11 @@ type (
 		Project  string `mapstructure:"project"`
 		Bucket   string `mapstructure:"bucket"`
 		TokenENV string `mapstructure:"token_env"`
+	}
+
+	// Image allow manage the available images format to be uploaded.
+	Image struct {
+		AllowedFormats []string `mapstructure:"allowed_formats"`
 	}
 )
 
@@ -55,30 +64,26 @@ func (c Config) validate() error {
 }
 
 // ReadConfig from a file and return an object with all the configs.
-func ReadConfig() (Config, error) {
+func ReadConfig(env string) Config {
 	var c Config
 
 	v := viper.New()
-
-	env := actualEnvironment()
 
 	v.AddConfigPath("./conf/")
 	v.SetConfigName(env)
 	v.SetConfigType("yaml")
 
-	log.Default().Printf("Using ENV: %s \n", env)
-
 	if err := v.ReadInConfig(); err != nil {
-		return Config{}, err
+		panic(err)
 	}
 
 	if err := v.Unmarshal(&c); err != nil {
-		return Config{}, err
+		panic(err)
 	}
 
 	if err := c.validate(); err != nil {
-		return Config{}, err
+		panic(err)
 	}
 
-	return c, nil
+	return c
 }

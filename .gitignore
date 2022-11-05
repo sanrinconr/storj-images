@@ -1,2 +1,4 @@
 .idea
 .testKeys.env
+tmp/
+coverage/
