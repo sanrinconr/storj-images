@@ -16,3 +16,11 @@ repos:
     hooks:
       - id: go-test-mod
         name: Running tests
+  - repo: local
+    hooks:
+      - id: coverage
+        name: coverage-up-to-90%
+        entry: ./coverage.sh
+        language: script
+        pass_filenames: false
+        

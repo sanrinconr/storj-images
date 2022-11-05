@@ -3,6 +3,7 @@ services:
   backend:
     network_mode: host
     build: 
+      context: ./
       dockerfile: Dockerfile
   mongodb:
     image: mongo

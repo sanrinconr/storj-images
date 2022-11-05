@@ -65,7 +65,7 @@ linters:
     - revive
     - govet
     - staticcheck
-    - deadcode
+    - unused
     - wsl
     - unused
     - typecheck
