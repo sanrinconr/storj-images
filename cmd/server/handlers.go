@@ -12,4 +12,8 @@ func setRoutes(router *gin.Engine) {
 	public.GET("/ping", middlewares.Bridge(resolver.Ping()))
 	public.GET("/error", middlewares.Bridge(resolver.Error()))
 	public.POST("/image", middlewares.Bridge(resolver.AddImage()))
+
+	if err := router.SetTrustedProxies([]string{"127.0.0.1"}); err != nil {
+		panic(err)
+	}
 }

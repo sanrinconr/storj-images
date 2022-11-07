@@ -57,13 +57,13 @@ func (i Image) Insert(ctx context.Context, img domain.Image) error {
 		return err
 	}
 
-	log.Debug(ctx, fmt.Sprintf("image id '%s' added in metadata storage", doc.ID))
+	log.Info(ctx, fmt.Sprintf("image id '%s' added in metadata storage", doc.ID))
 
 	if err := i.objectInfra.Insert(ctx, doc.ObjectStorageKey, img.Raw); err != nil {
 		return err
 	}
 
-	log.Debug(ctx, fmt.Sprintf("image '%s' added in object storage", doc.ObjectStorageKey))
+	log.Info(ctx, fmt.Sprintf("image '%s' added in object storage", doc.ObjectStorageKey))
 
 	return nil
 }
