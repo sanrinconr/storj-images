@@ -10,7 +10,7 @@ import (
 // infrastructure needed infrastructure things.
 // for what are pointers?, to make more easy the validation if exists or not an attribute.
 type infrastructure struct {
-	storj *infra.Storj
+	storj  *infra.Storj
 	mongo  *infra.Mongo
 	config Config
 }
@@ -53,7 +53,7 @@ func (i *infrastructure) Mongo() infra.Mongo {
 	}
 
 	mongo, err := infra.NewMongo(
-		i.config.IDS.URL,
+		os.Getenv(i.config.IDS.URLENV),
 		i.config.IDS.Database,
 		i.config.IDS.Collection,
 		os.Getenv(i.config.IDS.UserENV),

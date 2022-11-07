@@ -21,7 +21,7 @@ type (
 
 	// IDS configuration related to the database of IDS.
 	IDS struct {
-		URL         string `mapstructure:"url"`
+		URLENV      string `mapstructure:"url_env"`
 		Database    string `mapstructure:"database"`
 		Collection  string `mapstructure:"collection"`
 		UserENV     string `mapstructure:"user_env"`
@@ -44,7 +44,7 @@ type (
 func (c Config) validate() error {
 	const MissingConfig = "missing config: %s"
 
-	if c.Database.IDS.URL == "" {
+	if c.Database.IDS.URLENV == "" {
 		return fmt.Errorf(MissingConfig, "Database.IDS.URL")
 	}
 
