@@ -76,7 +76,7 @@ func GetLoggerFromCtx(ctx context.Context) *zap.SugaredLogger {
 }
 
 func formatMsg(uuid any, msg string) string {
-	return fmt.Sprintf("[msg:%s] [uuid:%s] [%s] ", msg, uuid, lastCaller())
+	return fmt.Sprintf("%s [uuid:%s] [%s] ", msg, uuid, lastCaller())
 }
 
 func lastCaller() string {
@@ -99,6 +99,7 @@ func getAbsolutePath() string {
 func resolveLoggerProd() *zap.SugaredLogger {
 	cfg := zap.NewProductionConfig()
 	cfg.EncoderConfig.EncodeTime = sysLogTimeEncoder
+	cfg.DisableCaller = true
 
 	logger, err := cfg.Build()
 	if err != nil {

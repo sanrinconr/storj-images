@@ -22,11 +22,11 @@ func Logger(ctx *gin.Context) {
 	ctx.Next()
 	// Not used log.Info because the message is custom
 	l := log.GetLoggerFromCtx(ctx)
-	l.Info(fmt.Sprintf("%s %s %s %d [uuid:%s]",
-		ctx.Request.Header.Get("X-Real-IP"),
+	l.Info(fmt.Sprintf("%s %s %d %s [uuid:%s]",
 		ctx.Request.Method,
 		ctx.Request.RequestURI,
 		ctx.Writer.Status(),
+		ctx.Request.Header.Get("X-Real-IP"),
 		ctx.Value(log.UUIDKey),
 	))
 }
