@@ -10,7 +10,7 @@ result="coverage/result.raw"
 go test ./... -coverprofile $coverProfileRaw -covermode count
 
 # Delete packages ignored
-cat $coverProfileRaw | grep -v /infrastructure/ >  $coverProfileFiltered
+cat $coverProfileRaw | grep -v /infrastructure/ | grep -v /controller/add_image.go >  $coverProfileFiltered
 
 # Process results, generate results
 go tool cover -func $coverProfileFiltered > $result
