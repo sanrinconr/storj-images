@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sanrinconr/storj-images/cmd/log"
@@ -22,6 +23,10 @@ func Logger(ctx *gin.Context) {
 	ctx.Next()
 	// Not used log.Info because the message is custom
 	l := log.GetLoggerFromCtx(ctx)
+	if ctx.Writer.Status() == http.StatusInternalServerError {
+		l.Error(ctx.Errors.Last().Err)
+	}
+
 	l.Info(fmt.Sprintf("%s %s %d %s [uuid:%s]",
 		ctx.Request.Method,
 		ctx.Request.RequestURI,
