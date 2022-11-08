@@ -1,16 +1,17 @@
 # Generate a new image version and push to the registry
 
 #docker-compose  build
-imageName=storj-images
-actualImage=$imageName-backend
-TAG=${REGISTRY}/$imageName:$1
+imageName=${REGISTRY}/storj-images-backend
+TAG=$imageName:$1
 
 # Docker compose dont allow custom tag names
 docker-compose build
 
-## Rename to prepare to upload to the registry
-docker tag $imageName-backend $TAG
+## Rename to prepare to upload semantic version to the registry
+docker tag $imageName $TAG
 docker push $TAG
 
+git tag $1
 # Remove bad named imaged
-docker rmi $actualImage
+docker rmi $imageName
+

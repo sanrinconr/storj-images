@@ -1,0 +1,12 @@
+version: '3'
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb-dev-testing  
+    environment:
+    - PUID=1000
+    - PGID=1000
+    - MONGO_INITDB_ROOT_USERNAME=root
+    - MONGO_INITDB_ROOT_PASSWORD=12345
+    ports:
+    - "27017:27017"

@@ -1,15 +1,35 @@
 version: '3'
+
 services:
+
   backend:
-    network_mode: host
+    container_name: storj-images-backend-container
+    image: ${REGISTRY}/storj-images-backend
     build: 
+      context: ./
       dockerfile: Dockerfile
-  mongodb:
-    image: mongo
-    container_name: mongodb
     environment:
-    - PUID=1000
-    - PGID=1000
-    ports:
-    - 27017:27017
+       - PORT=8080
+       - ENV=prod
+       - MONGO_USER=${MONGO_USER}
+       - MONGO_PASS=${MONGO_PASS}
+       - MONGO_URL=${MONGO_URL}
+       - TOKEN_STORJ=${TOKEN_STORJ}
+    depends_on:
+      - mongodb
     restart: unless-stopped
+    ports:
+      - "8080:8080"
+
+
+  mongodb:
+    container_name: storj-images-mongodb-container
+    image: mongo:latest
+    volumes:
+      - /var/lib/mongo:/data/db
+    restart: unless-stopped
+
+
+networks:
+  default:
+    name: storj-images-network

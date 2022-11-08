@@ -1,7 +1,16 @@
 database:
   ids:
-    url: 'mongodb://localhost:27017/devmongo?authSource=admin'
+    url_env: 'MONGO_URL'
+    database: 'devmongo'
+    collection: 'images'
+    user_env: 'MONGO_USER'
+    password_env: 'MONGO_PASS'
   photos:
     project: 'Images golang'
-    bucket: 'devimages'
+    bucket: 'dev'
     token_env: 'TOKEN_STORJ'
+
+image:
+  allowed_formats:
+    - .png
+    - .jpg
