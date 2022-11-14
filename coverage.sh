@@ -5,12 +5,13 @@ mkdir -p coverage
 coverProfileRaw="coverage/profile.out.raw"
 coverProfileFiltered="coverage/profile.out.filtered"
 result="coverage/result.raw"
-
 # Execute tests and generate a profile
-go test ./... -coverprofile $coverProfileRaw -covermode count
+if ! go test ./src/... -shuffle=on -race -coverprofile $coverProfileRaw -covermode=atomic; then
+ exit 1
+fi
 
 # Delete packages ignored
-cat $coverProfileRaw | grep -v /infrastructure/ | grep -v /controller/add_image.go >  $coverProfileFiltered
+cat $coverProfileRaw | grep -v -f .covignore >  $coverProfileFiltered
 
 # Process results, generate results
 go tool cover -func $coverProfileFiltered > $result
@@ -26,4 +27,8 @@ then
     echo "coverage was $totalCoverage% and is needed $expectedCoverage% "
     go tool cover -html=$coverProfileFiltered
     exit 1
+else
+    echo "passed coverage with $totalCoverage%, minimum is $expectedCoverage%"
+    #go tool cover -html=$coverProfileFiltered
+    exit 0
 fi

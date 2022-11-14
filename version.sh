@@ -12,6 +12,7 @@ docker tag $imageName $TAG
 docker push $TAG
 
 git tag $1
+git push
 # Remove bad named imaged
 docker rmi $imageName
 
