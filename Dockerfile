@@ -21,10 +21,10 @@ RUN go mod download
 COPY . .
 
 # Run tests
-RUN go test ./cmd/...
+RUN go test ./src/...
 
 # Build the application
-RUN go build -o main cmd/api/main.go
+RUN go build -o main src/cmd/main.go
 
 # Move to /dist directory as the place for resulting binary folder
 WORKDIR /dist

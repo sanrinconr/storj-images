@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/golangci/golangci-lint
-    rev: v1.50.0
+    rev: v1.50.1
     hooks:
       - id: golangci-lint
         name: Linter
@@ -11,16 +11,12 @@ repos:
           - --config=.code_quality/.golangci.yaml
           - --new-from-rev=HEAD~1 # comment this arg if you want to run pre-commit run --all-files
           - --fix
-  - repo: https://github.com/tekwizely/pre-commit-golang
-    rev: v1.0.0-beta.5
-    hooks:
-      - id: go-test-mod
-        name: Running tests
+
   - repo: local
     hooks:
       - id: coverage
-        name: coverage-up-to-90%
+        name: tests and coverage
         entry: ./coverage.sh
         language: script
+        types: [go]
         pass_filenames: false
-        

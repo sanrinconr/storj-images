@@ -22,13 +22,6 @@ linters-settings:
     lines: 60
     statements: 40
 
-  ifshort:
-    # Maximum length of variable declaration measured in number of lines, after which linter won't suggest using short syntax.
-    # Has higher priority than max-decl-chars.
-    max-decl-lines: 1
-    # Maximum length of variable declaration measured in number of characters, after which linter won't suggest using short syntax.
-    max-decl-chars: 30
-
   varnamelen:
     # The longest distance, in source lines, that is being considered a "small scope." (defaults to 5)
     # Variables used in at most this many lines will be ignored.
@@ -84,7 +77,6 @@ linters:
     - unconvert
     - nolintlint
     - gci
-    - ifshort
     - gofumpt
     - misspell
     - nestif
