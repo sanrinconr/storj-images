@@ -1,9 +1,13 @@
 package dependencies
 
 import (
+	"context"
 	"time"
 
+	domain "github.com/sanrinconr/storj-images/src"
 	"github.com/sanrinconr/storj-images/src/cmd/config"
+	"github.com/sanrinconr/storj-images/src/cmd/mocks"
+	"github.com/sanrinconr/storj-images/src/log"
 	"github.com/sanrinconr/storj-images/src/upload"
 )
 
@@ -33,6 +37,20 @@ func (p packages) uploadAddImage() upload.AddImage {
 	}
 
 	return u
+}
+
+func (p packages) getAllLocations() mocks.GetterMock {
+	return mocks.GetterMock(func(ctx context.Context) ([]domain.Location, error) {
+		log.Info(ctx, "warning:using a mock to get images")
+
+		return []domain.Location{
+			{
+				ID: "gatitohash",
+				//nolint:lll // are a url of test.
+				URL: "https://img.freepik.com/foto-gratis/gato-rojo-o-blanco-i-estudio-blanco_155003-13189.jpg?w=740&t=st=1668563236~exp=1668563836~hmac=fee01a12a48cc8abd9fb16a4e10a1be6ec7716c53474f92368d2200a38d81568",
+			},
+		}, nil
+	})
 }
 
 func defaultTimer() func() time.Time {

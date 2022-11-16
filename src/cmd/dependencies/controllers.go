@@ -36,3 +36,13 @@ func (r Resolver) UploadImage() func(*gin.Context) error {
 
 	return ctrl
 }
+
+// GetAllLocations resolve the controller to get images from the cloud.
+func (r Resolver) GetAllLocations() func(*gin.Context) error {
+	ctrl, err := controller.NewGetAllLocations(r.packages.getAllLocations())
+	if err != nil {
+		panic(err)
+	}
+
+	return ctrl
+}
