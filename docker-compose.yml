@@ -1,7 +1,6 @@
 version: '3'
 
 services:
-
   backend:
     container_name: storj-images-backend-container
     image: registry.santiagorincon.tk/storj-images-backend
@@ -13,7 +12,7 @@ services:
        - ENV=prod
        - MONGO_USER=${MONGO_USER}
        - MONGO_PASS=${MONGO_PASS}
-       - MONGO_URL=${MONGO_URL}
+       - MONGO_URL=mongodb://storj-images-mongodb-container:27017
        - TOKEN_STORJ=${TOKEN_STORJ}
     depends_on:
       - mongodb
@@ -21,14 +20,13 @@ services:
     ports:
       - "8080:8080"
 
-
   mongodb:
     container_name: storj-images-mongodb-container
-    image: mongo:latest
-    volumes:
-      - /var/lib/mongo:/data/db
-    restart: unless-stopped
-
+    image: mongo:6.0.3
+    restart: "no"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=12345
 
 networks:
   default:
