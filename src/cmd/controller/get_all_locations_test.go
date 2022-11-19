@@ -11,6 +11,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	domain "github.com/sanrinconr/storj-images/src"
@@ -19,9 +20,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const (
-	defaultID  = "testID"
-	defaultURL = "testURL"
+var (
+	defaultID   = "testID"
+	defaultURL  = "testURL"
+	defaultName = "testName"
+	defaultTime = time.Date(2020, 10, 10, 0, 0, 0, 0, time.UTC)
 )
 
 func TestEndpoint_Success(t *testing.T) {
@@ -66,8 +69,10 @@ func defaultGetterMock() mocks.GetterMock {
 	return func(ctx context.Context) ([]domain.Location, error) {
 		return []domain.Location{
 			{
-				ID:  defaultID,
-				URL: defaultURL,
+				ID:        defaultID,
+				Name:      defaultName,
+				URL:       defaultURL,
+				CreatedAt: defaultTime,
 			},
 		}, nil
 	}

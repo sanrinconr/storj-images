@@ -2,6 +2,7 @@ package domain
 
 import (
 	"context"
+	"time"
 )
 
 // Uploader allow up the image into the cloud.
@@ -11,7 +12,7 @@ type Uploader interface {
 
 // Getter allow get images from the cloud.
 type Getter interface {
-	GetAll(context.Context) ([]Location, error)
+	All(context.Context) ([]Location, error)
 }
 
 // Image are the representation of the input of a user.
@@ -23,6 +24,8 @@ type Image struct {
 
 // Location of image in internet .
 type Location struct {
-	ID  string
-	URL string
+	ID        string
+	Name      string
+	URL       string
+	CreatedAt time.Time
 }

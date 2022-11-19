@@ -11,8 +11,8 @@ import (
 // GetterMock simulate the response of location of images in the cloud.
 type GetterMock func(context.Context) ([]domain.Location, error)
 
-// GetAll can simulate any behaviour.
-func (g GetterMock) GetAll(ctx context.Context) ([]domain.Location, error) {
+// All can simulate any behaviour.
+func (g GetterMock) All(ctx context.Context) ([]domain.Location, error) {
 	if g == nil {
 		return nil, errors.New("default mock error")
 	}

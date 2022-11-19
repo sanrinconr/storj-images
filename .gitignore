@@ -2,3 +2,4 @@
 .testKeys.env
 tmp/
 coverage/
+test/

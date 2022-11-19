@@ -11,26 +11,20 @@ import (
 	"storj.io/uplink"
 )
 
-// Storj interface to interact with the decentralized database.
-type Storj interface {
-	Insert(context.Context, string, []byte) error
-	GetAll(context.Context) ([][]byte, error)
-	GetByID(context.Context, string) ([]byte, error)
-	DeleteByID(ctx context.Context, id string) error
-}
-
 type (
-	storj struct {
+	// Storj have the token, bucket and project name interact with storj.
+	Storj struct {
 		appAccessToken string
 		bucketName     string
 		projectName    string
 	}
 
 	// nolint:revive // it's self explanatory
-	StorjOption func(*storj)
+	StorjOption func(*Storj)
 )
 
-func (s storj) Insert(ctx context.Context, key string, value []byte) error {
+// Insert create a new object into the bucket.
+func (s Storj) Insert(ctx context.Context, key string, value []byte) error {
 	log.Debug(ctx, fmt.Sprintf("inserting data in storj with bucket '%s' and key '%s'", s.bucketName, key))
 
 	project, err := s.project(ctx)
@@ -62,81 +56,8 @@ func (s storj) Insert(ctx context.Context, key string, value []byte) error {
 	return nil
 }
 
-func (s storj) GetAll(ctx context.Context) ([][]byte, error) {
-	log.Debug(ctx, "getting all objects of bucket")
-
-	keysList, err := s.listAllObjects(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	objects := make([][]byte, len(keysList))
-
-	for i := range keysList {
-		object, err := s.GetByID(ctx, keysList[i])
-		if err != nil {
-			return nil, err
-		}
-
-		objects[i] = object
-	}
-
-	log.Debug(ctx, fmt.Sprintf("obtained all objects of bucket %s", s.bucketName))
-
-	return objects, nil
-}
-
-func (s storj) listAllObjects(ctx context.Context) ([]string, error) {
-	log.Debug(ctx, "getting all list of keys")
-
-	project, err := s.project(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	objects := project.ListObjects(ctx, s.bucketName, nil)
-
-	keys := make([]string, 0)
-
-	for objects.Next() {
-		keys = append(keys, objects.Item().Key)
-	}
-
-	log.Debug(ctx, "obtained all keys")
-
-	return keys, nil
-}
-
-func (s storj) GetByID(ctx context.Context, id string) ([]byte, error) {
-	log.Debug(ctx, fmt.Sprintf("getting info of object %s", id))
-
-	project, err := s.project(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	object, err := project.DownloadObject(ctx, s.bucketName, id, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	defer func(object *uplink.Download) {
-		if err := object.Close(); err != nil {
-			log.Error(ctx, fmt.Errorf("object cannot be closed: %s", err))
-		}
-	}(object)
-
-	received, err := io.ReadAll(object)
-	if err != nil {
-		return nil, err
-	}
-
-	log.Debug(ctx, fmt.Sprintf("finished finding of object %s", id))
-
-	return received, err
-}
-
-func (s storj) DeleteByID(ctx context.Context, id string) error {
+// DeleteByID from storj bucked.
+func (s Storj) DeleteByID(ctx context.Context, id string) error {
 	log.Debug(ctx, fmt.Sprintf("deleting object %s", id))
 
 	project, err := s.project(ctx)
@@ -162,7 +83,7 @@ func (s storj) DeleteByID(ctx context.Context, id string) error {
 
 // project given a token, generate the object to authorize into the SDK and finally get
 // object project to manipulate buckets and their objects.
-func (s storj) project(ctx context.Context) (*uplink.Project, error) {
+func (s Storj) project(ctx context.Context) (*uplink.Project, error) {
 	access, err := uplink.ParseAccess(s.appAccessToken)
 	if err != nil {
 		return nil, err
@@ -181,7 +102,36 @@ func (s storj) project(ctx context.Context) (*uplink.Project, error) {
 	return project, nil
 }
 
-func (s storj) validate() error {
+// GetShareableLink obtain an url to obtain the resource.
+func (s Storj) GetShareableLink(ctx context.Context, key string) (string, error) {
+	const baseURL = "https://link.us1.storjshare.io"
+
+	access, err := uplink.ParseAccess(s.appAccessToken)
+	if err != nil {
+		return "", err
+	}
+
+	permission := uplink.ReadOnlyPermission()
+	permission.AllowList = false
+	shared := uplink.SharePrefix{
+		Prefix: key + "/",
+		Bucket: s.bucketName,
+	}
+
+	restrictedAccess, err := access.Share(permission, shared)
+	if err != nil {
+		return "", err
+	}
+
+	serial, err := restrictedAccess.Serialize()
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%s/s/%s/%s/%s", baseURL, serial, s.bucketName, key), nil
+}
+
+func (s Storj) validate() error {
 	const dependencyErr = "dependency error in storj infrastructure: missing %s"
 
 	if s.bucketName == "" {
@@ -201,14 +151,14 @@ func (s storj) validate() error {
 
 // NewStorj create an object that allow manage the infrastructure of storj.
 func NewStorj(opts ...StorjOption) (Storj, error) {
-	s := storj{}
+	s := Storj{}
 
 	for _, op := range opts {
 		op(&s)
 	}
 
 	if err := s.validate(); err != nil {
-		return nil, err
+		return Storj{}, err
 	}
 
 	return s, nil
@@ -216,21 +166,21 @@ func NewStorj(opts ...StorjOption) (Storj, error) {
 
 // WithStorjAppAccess set the environment varible where find the access token.
 func WithStorjAppAccess(token string) StorjOption {
-	return func(s *storj) {
+	return func(s *Storj) {
 		s.appAccessToken = token
 	}
 }
 
 // WithStorjBucketName set the bucket name.
 func WithStorjBucketName(name string) StorjOption {
-	return func(s *storj) {
+	return func(s *Storj) {
 		s.bucketName = name
 	}
 }
 
 // WithStorjProjectName set the project name.
 func WithStorjProjectName(name string) StorjOption {
-	return func(s *storj) {
+	return func(s *Storj) {
 		s.projectName = name
 	}
 }

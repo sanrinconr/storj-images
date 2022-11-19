@@ -24,7 +24,7 @@ func NewGetAllLocations(getter domain.Getter) (func(*gin.Context) error, error) 
 }
 
 func (g GetAllLocations) endpoint(ctx *gin.Context) error {
-	locations, err := g.getter.GetAll(ctx)
+	locations, err := g.getter.All(ctx)
 	if err != nil {
 		return NewError(http.StatusInternalServerError, err)
 	}
@@ -41,8 +41,10 @@ func (g GetAllLocations) domainToResponse(l []domain.Location) []internal.Locati
 
 	for i := range l {
 		r[i] = internal.Location{
-			ID:  l[i].ID,
-			URL: l[i].URL,
+			ID:        l[i].ID,
+			URL:       l[i].URL,
+			Name:      l[i].Name,
+			CreatedAt: l[i].CreatedAt,
 		}
 	}
 

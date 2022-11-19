@@ -54,18 +54,14 @@ func (m Mongo) Insert(ctx context.Context, doc interface{}) error {
 // GetAll definition of this not already defined.
 //
 //nolint:godox,revive // are going be defined when the feature of get images are finished.
-func (m Mongo) GetAll(ctx context.Context, query, projections bson.M) ([]bson.M, error) {
+func (m Mongo) GetAll(ctx context.Context, query, projections bson.M) (*mongodriver.Cursor, error) {
 	opts := options.Find().SetProjection(projections)
+	opts.SetSort(bson.D{{Key: "created_at", Value: -1}})
 
 	c, err := m.collection.Find(ctx, query, opts)
 	if err != nil {
 		return nil, err
 	}
 
-	var results []bson.M
-	if err := c.All(ctx, &results); err != nil {
-		return nil, err
-	}
-
-	return results, err
+	return c, nil
 }
