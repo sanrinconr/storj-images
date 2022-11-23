@@ -21,7 +21,7 @@ RUN go mod download
 COPY . .
 
 # Run tests
-RUN go test ./src/...
+#RUN go test ./src/...
 
 # Build the application
 RUN go build -o main src/cmd/main.go

@@ -10,6 +10,12 @@ services:
     - MONGO_INITDB_ROOT_PASSWORD=12345
     ports:
     - "27017:27017"
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 100M
 
 networks:
   default:

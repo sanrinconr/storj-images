@@ -19,6 +19,12 @@ services:
     restart: unless-stopped
     ports:
       - "8080:8080"
+    deploy:
+      resources:
+        limits:
+          memory: 50M
+        reservations:
+          memory: 10M
 
   mongodb:
     container_name: storj-images-mongodb-container
@@ -27,6 +33,12 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=12345
+    deploy:
+      resources:
+        limits:
+          memory: 600M
+        reservations:
+          memory: 100M
 
 networks:
   default:

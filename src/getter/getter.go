@@ -6,16 +6,15 @@ import (
 	"fmt"
 
 	domain "github.com/sanrinconr/storj-images/src"
-	"github.com/sanrinconr/storj-images/src/getter/internal"
+	"github.com/sanrinconr/storj-images/src/mongo"
 	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
 type (
 	metadata interface {
 		//nolint:godox // to think later.
 		// TODO: this abstraction make sense?, need a bson, a mongo package.
-		GetAll(ctx context.Context, query, projections bson.M) (*mongodriver.Cursor, error)
+		GetAll(ctx context.Context, query, projections bson.M) ([]mongo.Document, error)
 	}
 
 	object interface {
@@ -41,33 +40,29 @@ func New(m metadata, o object) (Getter, error) {
 
 // All obtain all images saved in metadata, with this make a query into object storage.
 func (g Getter) All(ctx context.Context) ([]domain.Location, error) {
-	c, err := g.metadata.GetAll(ctx, bson.M{}, nil)
+	docs, err := g.metadata.GetAll(ctx, bson.M{}, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	res := make([]domain.Location, c.RemainingBatchLength())
+	locs := make([]domain.Location, len(docs))
 
-	for i := 0; c.Next(ctx); i++ {
-		var img internal.Image
-		if err := c.Decode(&img); err != nil {
-			return nil, err
+	for i := range docs {
+		loc := domain.Location{
+			ID:        docs[i].ID,
+			Name:      docs[i].Name,
+			CreatedAt: docs[i].CreatedAt,
 		}
 
-		loc := domain.Location{}
-		loc.ID = img.ObjectStorageKey
-		loc.Name = img.Name
-		loc.CreatedAt = img.CreatedAt
-
-		loc.URL, err = g.object.GetShareableLink(ctx, img.ObjectStorageKey)
+		loc.URL, err = g.object.GetShareableLink(ctx, docs[i].ObjectStorageKey)
 		if err != nil {
 			return nil, err
 		}
 
-		res[i] = loc
+		locs[i] = loc
 	}
 
-	return res, nil
+	return locs, nil
 }
 
 func (g Getter) validate() error {
