@@ -1,13 +1,13 @@
 database:
   ids:
     url_env: 'MONGO_URL'
-    database: 'devmongo'
+    database: 'storj'
     collection: 'images'
     user_env: 'MONGO_USER'
     password_env: 'MONGO_PASS'
   photos:
     project: 'Images golang'
-    bucket: 'dev'
+    bucket: 'prod'
     token_env: 'TOKEN_STORJ'
 
 image:
