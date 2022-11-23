@@ -5,17 +5,32 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch Package",
+            "name": "Real",
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${workspaceFolder}/cmd/api/main.go",
+            "program": "${workspaceFolder}src/cmd/api/main.go",
             "cwd": "${workspaceRoot}",
             "env": {
                 "TOKEN_STORJ": "foo",
-                "MONGO_USER":"root",
-                "MONGO_PASS":"12345"
-              }
+                "MONGO_URL": "mongodb://127.0.0.1:27017",
+                "MONGO_USER": "root",
+                "MONGO_PASS": "12345"
+            }
+        },
+        {
+            "name": "Test file",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/src/test/main.go",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "TOKEN_STORJ": "foo",
+                "MONGO_URL": "mongodb://127.0.0.1:27017",
+                "MONGO_USER": "root",
+                "MONGO_PASS": "12345"
+            }
         }
     ]
 }

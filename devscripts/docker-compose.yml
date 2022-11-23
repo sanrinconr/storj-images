@@ -2,7 +2,7 @@ version: '3'
 services:
   mongodb:
     image: mongo:latest
-    container_name: mongodb-dev-testing  
+    container_name: mongodb-dev-testing-container
     environment:
     - PUID=1000
     - PGID=1000
@@ -10,3 +10,13 @@ services:
     - MONGO_INITDB_ROOT_PASSWORD=12345
     ports:
     - "27017:27017"
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 100M
+
+networks:
+  default:
+    name: mongodb-dev-testing

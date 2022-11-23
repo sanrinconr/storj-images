@@ -2,11 +2,59 @@
     // See https://go.microsoft.com/fwlink/?LinkId=733558
     // for the documentation about the tasks.json format
     "version": "2.0.0",
+    "options": {
+        "env": {
+            // For token storj, go to settings.json and add:
+            // "terminal.integrated.env.linux": {"TOKEN_STORJ": "xxxxx"},
+            "MONGO_USER": "root",
+            "MONGO_PASS": "12345",
+            "MONGO_URL": "mongodb://127.0.0.1:27017"
+        }
+    },
     "tasks": [
         {
-            "label": "test",
+            "label": "run infinite",
             "type": "shell",
-            "command": "go test ./..."
+            "command": "air",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+        },
+        {
+            "label": "run develop",
+            "type": "shell",
+            "command": "go run ${workspaceFolder}/src/cmd/main.go",
+            "problemMatcher": [],
+        },
+        {
+            "label": "run docker",
+            "type": "shell",
+            "command": "./run.sh",
+            "problemMatcher": []
+        },
+        {
+            "label": "version",
+            "type": "shell",
+            "command": "./version.sh ${input:versionInput}",
+            "problemMatcher": []
+        },
+        {
+            "label": "setup local mongo",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/devscripts"
+            },
+            "command": "./run.sh",
+            "problemMatcher": []
+        }
+    ],
+    "inputs": [
+        {
+            "type": "promptString",
+            "id": "versionInput",
+            "description": "Que version vas a crear?",
+            "default": "test-1."
         }
     ]
 }

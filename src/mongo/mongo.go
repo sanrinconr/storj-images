@@ -1,4 +1,4 @@
-package databases
+package mongo
 
 import (
 	"context"
@@ -54,18 +54,25 @@ func (m Mongo) Insert(ctx context.Context, doc interface{}) error {
 // GetAll definition of this not already defined.
 //
 //nolint:godox,revive // are going be defined when the feature of get images are finished.
-func (m Mongo) GetAll(ctx context.Context, query, projections bson.M) ([]bson.M, error) {
+func (m Mongo) GetAll(ctx context.Context, query, projections bson.M) ([]Document, error) {
 	opts := options.Find().SetProjection(projections)
+	opts.SetSort(bson.D{{Key: "created_at", Value: -1}})
 
 	c, err := m.collection.Find(ctx, query, opts)
 	if err != nil {
 		return nil, err
 	}
 
-	var results []bson.M
-	if err := c.All(ctx, &results); err != nil {
-		return nil, err
+	res := make([]Document, c.RemainingBatchLength())
+
+	for i := 0; c.Next(ctx); i++ {
+		var doc Document
+		if err := c.Decode(&doc); err != nil {
+			return nil, err
+		}
+
+		res[i] = doc
 	}
 
-	return results, err
+	return res, nil
 }
