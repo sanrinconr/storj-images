@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/sanrinconr/storj-images/src/cmd/config"
+	"github.com/sanrinconr/storj-images/src/getter"
 	"github.com/sanrinconr/storj-images/src/upload"
 )
 
@@ -33,6 +34,15 @@ func (p packages) uploadAddImage() upload.AddImage {
 	}
 
 	return u
+}
+
+func (p packages) getAllLocations() getter.Getter {
+	g, err := getter.New(Mongo(p.config), Storj(p.config))
+	if err != nil {
+		panic(err)
+	}
+
+	return g
 }
 
 func defaultTimer() func() time.Time {

@@ -25,7 +25,7 @@ expectedCoverage=90
 if [ 1 -eq "$(echo "$totalCoverage < $expectedCoverage" |bc )" ]
 then
     echo "coverage was $totalCoverage% and is needed $expectedCoverage% "
-    go tool cover -html=$coverProfileFiltered
+    #go tool cover -html=$coverProfileFiltered
     exit 1
 else
     echo "passed coverage with $totalCoverage%, minimum is $expectedCoverage%"

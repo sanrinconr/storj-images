@@ -6,6 +6,7 @@ import (
 
 	"github.com/sanrinconr/storj-images/src/cmd/config"
 	"github.com/sanrinconr/storj-images/src/databases"
+	"github.com/sanrinconr/storj-images/src/mongo"
 )
 
 // Storj resolve a storj infrastructure object.
@@ -28,8 +29,8 @@ func Storj(c config.Config) databases.Storj {
 }
 
 // Mongo resolve a mongo infrastructure object to save documents.
-func Mongo(c config.Config) databases.Mongo {
-	m, err := databases.NewMongo(
+func Mongo(c config.Config) mongo.Mongo {
+	m, err := mongo.NewMongo(
 		os.Getenv(c.IDS.URLENV),
 		c.IDS.Database,
 		c.IDS.Collection,
