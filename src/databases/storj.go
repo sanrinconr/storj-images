@@ -104,7 +104,7 @@ func (s Storj) project(ctx context.Context) (*uplink.Project, error) {
 
 // GetShareableLink obtain an url to obtain the resource.
 func (s Storj) GetShareableLink(ctx context.Context, key string) (string, error) {
-	const baseURL = "https://link.us1.storjshare.io"
+	const baseURL = "https://link.storjshare.io"
 
 	access, err := uplink.ParseAccess(s.appAccessToken)
 	if err != nil {

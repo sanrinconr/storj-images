@@ -9,8 +9,10 @@ import (
 )
 
 const (
-	prod    = "prod"
-	develop = "develop"
+	// Prod define the production environment.
+	Prod = "prod"
+	// Develop define the development environment.
+	Develop = "develop"
 )
 
 type (
@@ -77,11 +79,11 @@ func ReadConfig(env string) Config {
 // ActualEnvironment return the scope running the api given by ENV variable.
 func ActualEnvironment() string {
 	env := os.Getenv("ENV")
-	if env == "" || env == develop {
-		return develop
+	if env == "" || env == Develop {
+		return Develop
 	}
 
-	return prod
+	return Prod
 }
 
 func (c Config) validate() error {

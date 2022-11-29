@@ -32,6 +32,7 @@ func createRouter() *gin.Engine {
 	router.Use(gin.Recovery())
 	router.Use(middlewares.LoadLogger(logger))
 	router.Use(middlewares.Logger)
+	router.Use(middlewares.SetCors())
 	router.Use(middlewares.ErrorHandler)
 	setRoutes(router)
 
