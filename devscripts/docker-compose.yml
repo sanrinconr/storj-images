@@ -10,6 +10,8 @@ services:
     - MONGO_INITDB_ROOT_PASSWORD=12345
     ports:
     - "27017:27017"
+    volumes:
+         - /var/lib/mongo_dev:/data/db
     deploy:
       resources:
         limits:
