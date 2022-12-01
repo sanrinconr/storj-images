@@ -10,8 +10,8 @@ services:
     environment:
        - PORT=8080
        - ENV=develop
-       - MONGO_USER=${MONGO_USER}
-       - MONGO_PASS=${MONGO_PASS}
+       - MONGO_USER=root
+       - MONGO_PASS=12345
        - MONGO_URL=mongodb://storj-images-mongodb-container:27017
        - TOKEN_STORJ=${TOKEN_STORJ}
     depends_on:
