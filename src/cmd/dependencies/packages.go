@@ -22,7 +22,7 @@ func newPackages(c config.Config, opts ...func() time.Time) packages {
 	return packages{c, timer}
 }
 
-func (p packages) uploadAddImage() upload.AddImage {
+func (p packages) uploadAddImage() upload.Upload {
 	r, err := upload.NewRepository(Mongo(p.config), Storj(p.config), defaultTimer())
 	if err != nil {
 		panic(err)

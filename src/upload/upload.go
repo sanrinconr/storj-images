@@ -16,15 +16,15 @@ type inserter interface {
 	Insert(context.Context, domain.Image, string) error
 }
 
-// AddImage has a repository to interact with storage and allowed formats to define what accept or not.
-type AddImage struct {
+// Upload has a repository to interact with storage and allowed formats to define what accept or not.
+type Upload struct {
 	inserter       inserter
 	allowedFormats []string
 }
 
 // NewAddImage create a new use case for upload images.
-func NewAddImage(i inserter, f []string, timer func() time.Time) (AddImage, error) {
-	a := AddImage{
+func NewAddImage(i inserter, f []string, timer func() time.Time) (Upload, error) {
+	a := Upload{
 		inserter:       i,
 		allowedFormats: f,
 	}
@@ -33,21 +33,21 @@ func NewAddImage(i inserter, f []string, timer func() time.Time) (AddImage, erro
 }
 
 // Upload add a new image into the.
-func (a AddImage) Upload(ctx context.Context, img domain.Image) error {
-	if !a.allowedFormat(ctx, img) {
+func (u Upload) Upload(ctx context.Context, img domain.Image) error {
+	if !u.allowedFormat(ctx, img) {
 		return domain.InvalidFormatImageError(errors.New("invalid image format"))
 	}
 
-	if err := a.inserter.Insert(ctx, img, a.extension(img)); err != nil {
+	if err := u.inserter.Insert(ctx, img, u.extension(img)); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (a AddImage) allowedFormat(ctx context.Context, i domain.Image) bool {
-	received := a.extension(i)
-	for _, allowed := range a.allowedFormats {
+func (u Upload) allowedFormat(ctx context.Context, i domain.Image) bool {
+	received := u.extension(i)
+	for _, allowed := range u.allowedFormats {
 		if received == allowed {
 			return true
 		}
@@ -58,18 +58,18 @@ func (a AddImage) allowedFormat(ctx context.Context, i domain.Image) bool {
 	return false
 }
 
-func (a AddImage) extension(i domain.Image) string {
+func (u Upload) extension(i domain.Image) string {
 	return mimetype.Detect(i.Raw).Extension()
 }
 
-func (a AddImage) validate() error {
+func (u Upload) validate() error {
 	const dependencyErr = "missing %s in add image func"
 
-	if a.inserter == nil {
+	if u.inserter == nil {
 		return fmt.Errorf(dependencyErr, "inserter")
 	}
 
-	if len(a.allowedFormats) == 0 {
+	if len(u.allowedFormats) == 0 {
 		return fmt.Errorf(dependencyErr, "formats")
 	}
 
