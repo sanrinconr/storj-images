@@ -11,15 +11,15 @@ import (
 
 // Storj resolve a storj infrastructure object.
 func Storj(c config.Config) storj.Storj {
-	t := os.Getenv(c.TokenENV)
+	t := os.Getenv(c.StorjImagesDB["token_env"])
 	if t == "" {
-		panic(fmt.Errorf("variable %s not is defined", c.TokenENV))
+		panic(fmt.Errorf("variable %s not is defined", c.StorjImagesDB["token_env"]))
 	}
 
 	s, err := storj.New(
 		storj.WithAppAccess(t),
-		storj.WithBucketName(c.Bucket),
-		storj.WithProjectName(c.Project),
+		storj.WithBucketName(c.StorjImagesDB["bucket"]),
+		storj.WithProjectName(c.StorjImagesDB["project"]),
 	)
 	if err != nil {
 		panic(err)
@@ -31,11 +31,11 @@ func Storj(c config.Config) storj.Storj {
 // Mongo resolve a mongo infrastructure object to save documents.
 func Mongo(c config.Config) mongo.Mongo {
 	m, err := mongo.NewMongo(
-		os.Getenv(c.IDS.URLENV),
-		c.IDS.Database,
-		c.IDS.Collection,
-		os.Getenv(c.IDS.UserENV),
-		os.Getenv(c.IDS.PasswordENV),
+		os.Getenv(c.MongoMetadataDB["url_env"]),
+		c.MongoMetadataDB["database"],
+		c.MongoMetadataDB["collection"],
+		os.Getenv(c.MongoMetadataDB["user_env"]),
+		os.Getenv(c.MongoMetadataDB["password_env"]),
 	)
 	if err != nil {
 		panic(err)

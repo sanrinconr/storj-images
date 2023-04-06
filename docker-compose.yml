@@ -9,7 +9,7 @@ services:
       dockerfile: Dockerfile
     environment:
        - PORT=8080
-       - ENV=prod
+       - ENV=develop
        - MONGO_USER=${MONGO_USER}
        - MONGO_PASS=${MONGO_PASS}
        - MONGO_URL=mongodb://storj-images-mongodb-container:27017
