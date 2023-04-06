@@ -1,2 +1,2 @@
 src/cmd/controller/add_image.go
-src/databases/
+src/storj/
