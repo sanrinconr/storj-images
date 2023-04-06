@@ -5,21 +5,21 @@ import (
 	"os"
 
 	"github.com/sanrinconr/storj-images/src/cmd/config"
-	"github.com/sanrinconr/storj-images/src/databases"
 	"github.com/sanrinconr/storj-images/src/mongo"
+	"github.com/sanrinconr/storj-images/src/storj"
 )
 
 // Storj resolve a storj infrastructure object.
-func Storj(c config.Config) databases.Storj {
+func Storj(c config.Config) storj.Storj {
 	t := os.Getenv(c.TokenENV)
 	if t == "" {
 		panic(fmt.Errorf("variable %s not is defined", c.TokenENV))
 	}
 
-	s, err := databases.NewStorj(
-		databases.WithStorjAppAccess(t),
-		databases.WithStorjBucketName(c.Bucket),
-		databases.WithStorjProjectName(c.Project),
+	s, err := storj.New(
+		storj.WithAppAccess(t),
+		storj.WithBucketName(c.Bucket),
+		storj.WithProjectName(c.Project),
 	)
 	if err != nil {
 		panic(err)

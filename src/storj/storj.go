@@ -1,5 +1,5 @@
-// Package databases provide the raw management of external dependencies
-package databases
+// Package storj provide the raw management of external dependencies
+package storj
 
 import (
 	"bytes"
@@ -149,8 +149,8 @@ func (s Storj) validate() error {
 	return nil
 }
 
-// NewStorj create an object that allow manage the infrastructure of storj.
-func NewStorj(opts ...StorjOption) (Storj, error) {
+// New create an object that allow manage the infrastructure of storj.
+func New(opts ...StorjOption) (Storj, error) {
 	s := Storj{}
 
 	for _, op := range opts {
@@ -164,22 +164,22 @@ func NewStorj(opts ...StorjOption) (Storj, error) {
 	return s, nil
 }
 
-// WithStorjAppAccess set the environment varible where find the access token.
-func WithStorjAppAccess(token string) StorjOption {
+// WithAppAccess set the environment varible where find the access token.
+func WithAppAccess(token string) StorjOption {
 	return func(s *Storj) {
 		s.appAccessToken = token
 	}
 }
 
-// WithStorjBucketName set the bucket name.
-func WithStorjBucketName(name string) StorjOption {
+// WithBucketName set the bucket name.
+func WithBucketName(name string) StorjOption {
 	return func(s *Storj) {
 		s.bucketName = name
 	}
 }
 
-// WithStorjProjectName set the project name.
-func WithStorjProjectName(name string) StorjOption {
+// WithProjectName set the project name.
+func WithProjectName(name string) StorjOption {
 	return func(s *Storj) {
 		s.projectName = name
 	}
