@@ -1,0 +1,16 @@
+image_allowed_formats = [".png", ".jpg"]
+
+[mongo_metadata_db]
+url_env = 'MONGO_URL'
+database = 'storj'
+collection = 'images'
+user_env = 'MONGO_USER'
+password_env = 'MONGO_PASS'
+
+[storj_images_db]
+project = 'Images golang'
+bucket = 'prod'
+token_env = 'TOKEN_STORJ'
+
+
+

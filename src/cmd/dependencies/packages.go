@@ -28,7 +28,7 @@ func (p packages) uploadAddImage() upload.AddImage {
 		panic(err)
 	}
 
-	u, err := upload.NewAddImage(r, p.config.AllowedFormats, p.timer)
+	u, err := upload.NewAddImage(r, p.config.ImageAllowedFormats, p.timer)
 	if err != nil {
 		panic(err)
 	}
