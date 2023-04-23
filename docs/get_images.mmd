@@ -1,0 +1,6 @@
+flowchart LR
+   I(("start"))
+   I--> Front("Front <br> JS")
+   Front--> P_API("Photos API<br>Backend")
+   DB_MD[("DB Metadata<br>Mongo DB")] --> |"1<br>Obtain images ids"| P_API
+   O_ST[("Object storage<br> STORJ")] --> |"2<br> Obtain location of<br>images"| P_API
