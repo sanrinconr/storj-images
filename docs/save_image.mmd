@@ -1,0 +1,6 @@
+flowchart LR
+   I(("start"))
+   I--> Front("Front js")
+   Front--> P_API("Photos API<br>Backend")
+   P_API--> |"1<br>Save image id"| DB_MD[("DB Metadata<br>Mongo DB")]
+   P_API--> |"2<br>Send image"| O_ST[("Object storage<br> STORJ")]
