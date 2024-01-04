@@ -1,7 +1,7 @@
 # Generate a new image version and push to the registry
 
 #docker-compose  build
-imageName=registry.santiagorincon.tk/storj-images-backend
+imageName=registry.santiagorincon.dev/storj-images-backend
 TAG=$imageName:$1
 
 # Docker compose dont allow custom tag names

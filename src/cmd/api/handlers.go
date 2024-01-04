@@ -9,9 +9,9 @@ import (
 func setRoutes(router *gin.Engine) {
 	resolver := dependencies.New()
 	public := router.Group("")
-	public.GET("/ping", middlewares.Bridge(resolver.Ping()))
-	public.POST("/image", middlewares.Bridge(resolver.UploadImage()))
-	public.GET("/image/all", middlewares.Bridge(resolver.GetAllLocations()))
+	public.GET("/api/ping", middlewares.Bridge(resolver.Ping()))
+	public.POST("/api/image", middlewares.Bridge(resolver.UploadImage()))
+	public.GET("/api/image/all", middlewares.Bridge(resolver.GetAllLocations()))
 
 	if err := router.SetTrustedProxies([]string{"127.0.0.1"}); err != nil {
 		panic(err)

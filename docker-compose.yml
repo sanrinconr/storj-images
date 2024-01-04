@@ -3,7 +3,7 @@ version: '3'
 services:
   backend:
     container_name: storj-images-backend-container
-    image: registry.santiagorincon.tk/storj-images-backend
+    image: registry.santiagorincon.dev/storj-images-backend
     build: 
       context: ./
       dockerfile: Dockerfile
@@ -12,10 +12,8 @@ services:
        - ENV=develop
        - MONGO_USER=${MONGO_USER}
        - MONGO_PASS=${MONGO_PASS}
-       - MONGO_URL=mongodb://storj-images-mongodb-container:27017
+       - MONGO_URL=${MONGO_URL}
        - TOKEN_STORJ=${TOKEN_STORJ}
-    depends_on:
-      - mongodb
     restart: unless-stopped
     ports:
       - "8080:8080"
@@ -25,21 +23,3 @@ services:
           memory: 50M
         reservations:
           memory: 10M
-
-  mongodb:
-    container_name: storj-images-mongodb-container
-    image: mongo:6.0.3
-    restart: "no"
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=12345
-    deploy:
-      resources:
-        limits:
-          memory: 600M
-        reservations:
-          memory: 100M
-
-networks:
-  default:
-    name: storj-images-network
