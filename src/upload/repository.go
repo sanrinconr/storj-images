@@ -13,11 +13,6 @@ import (
 )
 
 type (
-	// MetadataInfra are the abstraction of the storage used to save metadata like a document.
-	MetadataInfra interface {
-		Insert(context.Context, interface{}) error
-	}
-
 	// ObjectInfra are the abstraction of the storage used to save a object like an image.
 	ObjectInfra interface {
 		Insert(context.Context, string, []byte) error
@@ -28,15 +23,13 @@ type (
 // and with a metadata storage (mongodb). Also include a timer to abstract
 // the manage of the time in different time zones.
 type Repository struct {
-	MetadataInfra
 	ObjectInfra
 	timer func() time.Time
 }
 
 // NewRepository create a new repository to abstract the interaction with multiple storages.
-func NewRepository(m MetadataInfra, o ObjectInfra, t func() time.Time) (Repository, error) {
+func NewRepository(o ObjectInfra, t func() time.Time) (Repository, error) {
 	r := Repository{
-		MetadataInfra: m,
 		ObjectInfra:   o,
 		timer:         t,
 	}
@@ -54,12 +47,6 @@ func (r Repository) Insert(ctx context.Context, img domain.Image, ext string) er
 		CreatedAt:        r.timer(),
 	}
 
-	if err := r.MetadataInfra.Insert(ctx, doc); err != nil {
-		return err
-	}
-
-	log.Info(ctx, fmt.Sprintf("image id '%s' added in metadata storage", doc.ID))
-
 	if err := r.ObjectInfra.Insert(ctx, doc.ObjectStorageKey, img.Raw); err != nil {
 		return err
 	}
@@ -72,10 +59,6 @@ func (r Repository) Insert(ctx context.Context, img domain.Image, ext string) er
 // validate all dependencies of repository.
 func (r Repository) validate() error {
 	const dependencyErr = "missing dependency %s in image repository"
-
-	if r.MetadataInfra == nil {
-		return fmt.Errorf(dependencyErr, "metadata infra")
-	}
 
 	if r.ObjectInfra == nil {
 		return fmt.Errorf(dependencyErr, "object infra")

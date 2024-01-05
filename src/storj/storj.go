@@ -9,6 +9,7 @@ import (
 
 	"github.com/sanrinconr/storj-images/src/log"
 	"storj.io/uplink"
+	"storj.io/uplink/edge"
 )
 
 type (
@@ -81,27 +82,6 @@ func (s Storj) DeleteByID(ctx context.Context, id string) error {
 	return nil
 }
 
-// project given a token, generate the object to authorize into the SDK and finally get
-// object project to manipulate buckets and their objects.
-func (s Storj) project(ctx context.Context) (*uplink.Project, error) {
-	access, err := uplink.ParseAccess(s.appAccessToken)
-	if err != nil {
-		return nil, err
-	}
-
-	project, err := uplink.OpenProject(ctx, access)
-	if err != nil {
-		return nil, err
-	}
-
-	_, err = project.EnsureBucket(ctx, s.bucketName)
-	if err != nil {
-		return nil, err
-	}
-
-	return project, nil
-}
-
 // GetShareableLink obtain an url to obtain the resource.
 func (s Storj) GetShareableLink(ctx context.Context, key string) (string, error) {
 	const baseURL = "https://link.storjshare.io"
@@ -128,7 +108,60 @@ func (s Storj) GetShareableLink(ctx context.Context, key string) (string, error)
 		return "", err
 	}
 
-	return fmt.Sprintf("%s/s/%s/%s/%s", baseURL, serial, s.bucketName, key), nil
+	return edge.JoinShareURL(
+		baseURL,
+		serial,
+		s.bucketName,
+		key,
+		&edge.ShareURLOptions{
+			Raw: true,
+		})
+}
+
+// ObtainAllKeys return the list of keys of all objects of bucket .
+func (s Storj) ObtainAllKeys(ctx context.Context) ([]string, error) {
+	project, err := s.project(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	identifiers := make([]string, 0)
+
+	iterator := project.ListObjects(ctx, s.bucketName, nil)
+	for iterator.Next() {
+		obj := iterator.Item()
+
+		if err := iterator.Err(); err != nil {
+			return nil, err
+		}
+
+		if obj != nil {
+			identifiers = append(identifiers, obj.Key)
+		}
+	}
+
+	return identifiers, nil
+}
+
+// project given a token, generate the object to authorize into the SDK and finally get
+// object project to manipulate buckets and their objects.
+func (s Storj) project(ctx context.Context) (*uplink.Project, error) {
+	access, err := uplink.ParseAccess(s.appAccessToken)
+	if err != nil {
+		return nil, err
+	}
+
+	project, err := uplink.OpenProject(ctx, access)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = project.EnsureBucket(ctx, s.bucketName)
+	if err != nil {
+		return nil, err
+	}
+
+	return project, nil
 }
 
 func (s Storj) validate() error {

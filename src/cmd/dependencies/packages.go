@@ -23,7 +23,7 @@ func newPackages(c config.Config, opts ...func() time.Time) packages {
 }
 
 func (p packages) uploadAddImage() upload.AddImage {
-	r, err := upload.NewRepository(Mongo(p.config), Storj(p.config), defaultTimer())
+	r, err := upload.NewRepository(Storj(p.config), defaultTimer())
 	if err != nil {
 		panic(err)
 	}
@@ -37,7 +37,7 @@ func (p packages) uploadAddImage() upload.AddImage {
 }
 
 func (p packages) getAllLocations() getter.Getter {
-	g, err := getter.New(Mongo(p.config), Storj(p.config))
+	g, err := getter.New(Storj(p.config))
 	if err != nil {
 		panic(err)
 	}

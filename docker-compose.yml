@@ -10,16 +10,7 @@ services:
     environment:
        - PORT=8080
        - ENV=develop
-       - MONGO_USER=${MONGO_USER}
-       - MONGO_PASS=${MONGO_PASS}
-       - MONGO_URL=${MONGO_URL}
        - TOKEN_STORJ=${TOKEN_STORJ}
     restart: unless-stopped
     ports:
       - "8080:8080"
-    deploy:
-      resources:
-        limits:
-          memory: 50M
-        reservations:
-          memory: 10M

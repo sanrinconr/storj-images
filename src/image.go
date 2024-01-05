@@ -2,7 +2,6 @@ package domain
 
 import (
 	"context"
-	"time"
 )
 
 // Uploader allow up the image into the cloud.
@@ -24,8 +23,6 @@ type Image struct {
 
 // Location of image in internet .
 type Location struct {
-	ID        string
-	Name      string
-	URL       string
-	CreatedAt time.Time
+	ID  string
+	URL string
 }

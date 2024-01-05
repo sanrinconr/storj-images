@@ -43,8 +43,6 @@ func (g GetAllLocations) domainToResponse(l []domain.Location) []internal.Locati
 		r[i] = internal.Location{
 			ID:        l[i].ID,
 			URL:       l[i].URL,
-			Name:      l[i].Name,
-			CreatedAt: l[i].CreatedAt,
 		}
 	}
 
